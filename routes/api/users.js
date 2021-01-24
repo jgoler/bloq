@@ -90,10 +90,19 @@ router.post('/', [
 //@route  POST api/users/images
 //@desc   Store user images
 //@access Private
-router.post("/images", upload.single('image'),
+router.post("/images", auth, upload.single('image'),
   async (req, res) => {
     try {
-      console.log(req.file);
+      //console.log(req.file);
+      let desiredUser = await User.findById(req.user.id);
+
+
+      if (desiredUser) {
+        //desiredUser.bio = bio;
+        desiredUser.userImage = req.file.path
+        await desiredUser.save();
+        return res.json(desiredUser);
+      }
     } catch (err) {
       console.error(err.message);
       res.status(500).send('Server error');
