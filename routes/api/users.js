@@ -120,8 +120,6 @@ router.post("/bio", [auth, [
       grade
     } = req.body;
 
-    console.log(req.body);
-
     try {
       let desiredUser = await User.findById(req.user.id);
 
@@ -130,6 +128,71 @@ router.post("/bio", [auth, [
         desiredUser.bio = bio;
         desiredUser.gender = gender;
         desiredUser.grade = grade;
+        await desiredUser.save();
+        return res.json(desiredUser);
+      }
+
+    } catch (err) {
+      console.error(err.message);
+      res.status(500).send('Server Error');
+    }
+
+  });
+
+
+// @route Post api/users/school
+// @desc  Allows user to add school
+// @access Private
+router.post("/school", [auth, [
+  check('school', 'Please enter your school').not().isEmpty(),
+]],
+  async (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ errors: errors.array() });
+    }
+
+    const {
+      school
+    } = req.body;
+
+    try {
+      let desiredUser = await User.findById(req.user.id);
+
+
+      if (desiredUser) {
+        desiredUser.school = school;
+        await desiredUser.save();
+        return res.json(desiredUser);
+      }
+
+    } catch (err) {
+      console.error(err.message);
+      res.status(500).send('Server Error');
+    }
+
+  });
+
+// @route Post api/users/location
+// @desc  Allows user to add general location
+// @access Private
+router.post("/location", auth,
+  async (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ errors: errors.array() });
+    }
+
+    const {
+      location
+    } = req.body;
+
+    try {
+      let desiredUser = await User.findById(req.user.id);
+
+
+      if (desiredUser) {
+        desiredUser.location = location;
         await desiredUser.save();
         return res.json(desiredUser);
       }

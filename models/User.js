@@ -17,6 +17,9 @@ const UserSchema = new mongoose.Schema({
   school: {
     type: String
   },
+  location: {
+    type: String,
+  },
   bio: {
     type: String
   },
