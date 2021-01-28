@@ -24,7 +24,7 @@ const UserSchema = new mongoose.Schema({
     type: String
   },
   grade: {
-    type: Number
+    type: String
   },
   gender: {
     type: String

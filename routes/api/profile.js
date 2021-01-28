@@ -21,5 +21,46 @@ router.get('/me', auth, async (req, res) => {
   }
 })
 
+router.get('/add', auth, async (req, res) => {
+
+  const {
+    grade,
+    gender,
+    school
+  } = req.body;
+
+  const profileFields = {};
+
+  if (grade) profileFields.grade = grade;
+  if (gender) profileFields.gender = gender;
+  if (school) profileFields.school = school;
+  try {
+    const userProfiles = await User.find({}, { grade: profileFields.grade, grade: 1 });
+
+    if (userProfiles.length === 0) {
+      return res.status(404).json({ msg: 'No profiles' });
+    }
+
+    numUserProfiles = userProfiles.length;
+
+    const profiles = [];
+
+    for (i = 0; i < numUserProfiles; i++) {
+      const profile = await User.findById(userProfiles[i]).select('-password');
+
+      console.log(profile);
+
+      if (profile) {
+        profiles.push(profile);
+      }
+    }
+
+    res.json(profiles);
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).send('Server Error');
+  }
+});
+
 
 module.exports = router;
