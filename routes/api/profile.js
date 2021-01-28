@@ -21,6 +21,10 @@ router.get('/me', auth, async (req, res) => {
   }
 })
 
+
+// @route  GET api/profile/add
+// @desc   Gets the recommend profiles
+// @access Private
 router.get('/add', auth, async (req, res) => {
 
   const {
@@ -48,14 +52,39 @@ router.get('/add', auth, async (req, res) => {
     for (i = 0; i < numUserProfiles; i++) {
       const profile = await User.findById(userProfiles[i]).select('-password');
 
-      console.log(profile);
+      //console.log(profile);
 
       if (profile) {
         profiles.push(profile);
       }
     }
+    const filteredBySchoolProfiles = [];
+    if (profileFields.school) {
+      for (z = 0; z < profiles.length; z++) {
+        if (profiles[z].school === school) {
+          filteredBySchoolProfiles.push(profiles[z]);
+        }
+      }
+    } else {
+      for (t = 0; t < profiles.length; t++) {
+        filteredBySchoolProfiles.push(profiles[t]);
+      }
+    }
 
-    res.json(profiles);
+    const filteredByGenderProfiles = [];
+    if (profileFields.gender) {
+      for (x = 0; x < filteredBySchoolProfiles.length; x++) {
+        if (filteredBySchoolProfiles[x].gender === gender) {
+          filteredByGenderProfiles.push(filteredBySchoolProfiles[x]);
+        }
+      }
+    } else {
+      for (p = 0; p < filteredBySchoolProfiles.length; p++) {
+        filteredByGenderProfiles.push(filteredBySchoolProfiles[p]);
+      }
+    }
+
+    res.json(filteredByGenderProfiles);
   } catch (err) {
     console.error(err.message);
     res.status(500).send('Server Error');
