@@ -93,6 +93,8 @@ router.get('/add', auth, async (req, res) => {
 });
 */
 
+/*
+note: below is the function that works
 // @route  GET api/profile/add
 // @desc   Gets the recommend profiles
 // @access Private
@@ -143,5 +145,48 @@ router.get('/add', auth, async (req, res) => {
     res.status(500).send('Server Error');
   }
 });
+*/
+
+router.get('/add', auth, async (req, res) => {
+  const {
+    grade,
+    gender,
+    school
+  } = req.body;
+
+  const profileFields = {};
+
+  if (grade) profileFields.grade = grade;
+  if (gender) profileFields.gender = gender;
+  if (school) profileFields.school = school;
+
+  const query = {};
+  if (profileFields.grade)
+    query.grade = profileFields.grade;
+
+  if (profileFields.gender)
+    query.gender = profileFields.gender;
+
+  if (profileFields.school)
+    query.school = profileFields.school;
+  try {
+    const userProfiles = await User.find(query);
+    /*
+      .then(users => {
+        //Your matched users will be in variable users
+        console.out(users)
+      })
+      */
+    res.json(userProfiles);
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).send('Server Error');
+  }
+
+});
+
+// @route  POST api/profile/me
+// @desc   Gets the recommend profiles
+// @access Private
 
 module.exports = router;
