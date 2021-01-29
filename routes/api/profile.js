@@ -25,6 +25,7 @@ router.get('/me', auth, async (req, res) => {
 // @route  GET api/profile/add
 // @desc   Gets the recommend profiles
 // @access Private
+/*
 router.get('/add', auth, async (req, res) => {
 
   const {
@@ -90,6 +91,57 @@ router.get('/add', auth, async (req, res) => {
     res.status(500).send('Server Error');
   }
 });
+*/
 
+// @route  GET api/profile/add
+// @desc   Gets the recommend profiles
+// @access Private
+router.get('/add', auth, async (req, res) => {
+  const {
+    grade,
+    gender,
+    school
+  } = req.body;
+
+  const profileFields = {};
+
+  if (grade) profileFields.grade = grade;
+  if (gender) profileFields.gender = gender;
+  if (school) profileFields.school = school;
+
+  //console.log(profileFields);
+
+  try {
+    let userProfiles = []
+    //const userProfiles = await User.find({}, { grade: profileFields.grade, grade: 1 }, { school: profileFields.school, school: 1 });
+
+    //const userProfiles = await User.find({}, { grade: profileFields.grade, grade: 1 });
+    if (profileFields.grade && profileFields.gender && profileFields.school) {
+      userProfiles = await User.find({ grade: profileFields.grade, gender: profileFields.gender, school: profileFields.school });
+    } else if (profileFields.grade && profileFields.gender) {
+      userProfiles = await User.find({ grade: profileFields.grade, gender: profileFields.gender });
+    } else if (profileFields.grade && profileFields.school) {
+      userProfiles = await User.find({ grade: profileFields.grade, school: profileFields.school });
+    } else if (profileFields.grade) {
+      userProfiles = await User.find({ grade: profileFields.grade });
+    } else if (profileFields.school && profileFields.gender) {
+      userProfiles = await User.find({ school: profileFields.school, gender: profileFields.gender });
+    } else if (profileFields.school) {
+      userProfiles = await User.find({ school: profileFields.school });
+    } else if (profileFields.gender) {
+      userProfiles = await User.find({ gender: profileFields.gender });
+    } else {
+      userProfiles = await User.find({});
+    }
+    // const userProfiles = await User.find({ grade: profileFields.grade });
+    //const userProfiles = await User.find({ gender: req.query.gender, grade: req.query.grade, school: req.query.school });
+
+    console.log(userProfiles);
+    res.json(userProfiles);
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).send('Server Error');
+  }
+});
 
 module.exports = router;
