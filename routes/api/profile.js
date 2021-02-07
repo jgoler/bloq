@@ -186,8 +186,57 @@ router.get('/add', auth, async (req, res) => {
 });
 
 
-// @route  POST api/profile/me
-// @desc   Gets the recommend profiles
+// @route  POST api/profile/addingfriend
+// @desc   Add friend to a user
 // @access Private
+
+//need to make sure it can't add the same user twice
+router.post("/addingfriend", auth,
+  async (req, res) => {
+    const currentUser = await User.findById(req.user.id);
+
+    const newFriend = await User.findById(req.body.newFriendID);
+
+    const newFriendData = {
+      name: newFriend.name,
+      user: newFriend.id
+    }
+
+    try {
+      /*
+      //console.log(currentUser.friends);
+      //console.log(currentUser.friends[0]);
+      currentUser.friends.filter(member => {
+        console.log("member.toString() " + member.toString());
+        console.log("req.user.id " + req.user.id);
+        console.log("member._id.toString() " + member.user.toString());
+      })
+      */
+      /*
+      if (currentUser.friends.filter(member => member.toString() === req.user.id).length > 0) {
+        return res.status(400).json({ msg: 'Already added as a friend' });
+      }
+      */
+      /*
+      if (currentUser.friends.filter(member => member.id === req.body.newFriendID)) {
+        return res.status(400).json({ msg: 'User is already a friend' });
+      }
+      */
+      if (
+        currentUser.friends.filter(member => member.user.toString() === req.body.newFriendID).length > 0) {
+        return res.status(400).json({ msg: 'That user is already your friend' });
+      }
+
+
+
+      currentUser.friends.unshift(newFriendData);
+      await currentUser.save();
+      return res.json(currentUser);
+    } catch (err) {
+      console.error(err.message);
+      res.status(500).send('Server Error');
+    }
+
+  });
 
 module.exports = router;
