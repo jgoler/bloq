@@ -44,6 +44,27 @@ const UserSchema = new mongoose.Schema({
       }
     }
   ],
+  /*
+  userImage: [
+    {
+      firstImage: {
+        type: String
+      },
+      secondImage: {
+        type: String
+      },
+      thirdImage: {
+        type: String
+      },
+      fourthImage: {
+        type: String
+      },
+      fifthImage: {
+        type: String
+      }
+    }
+  ]
+  */
   userImage: {
     type: String
   }

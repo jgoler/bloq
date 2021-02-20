@@ -6,6 +6,7 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const config = require('config');
 const multer = require('multer');
+//const upload = multer({ dest: 'uploads/' });
 const auth = require('../../middleware/auth');
 
 const storage = multer.diskStorage({
@@ -13,9 +14,11 @@ const storage = multer.diskStorage({
     cb(null, './uploads/');
   },
   filename: function (req, file, cb) {
-    cb(null, new Date().toISOString() + file.originalname)
+    cb(null, Date.now() + file.originalname);
   }
 });
+
+//const upload = multer({ storage: storage, });
 
 const fileFilter = (req, file, cb) => {
   // reject a file
@@ -32,6 +35,8 @@ const upload = multer({
   },
   fileFilter: fileFilter
 });
+
+
 
 //@route  POST api/users
 //@desc   Register user
@@ -90,8 +95,10 @@ router.post('/', [
 //@route  POST api/users/images
 //@desc   Store user images
 //@access Private
-router.post("/images", auth, upload.single('image'),
+router.post("/images", auth, upload.single('userImage'),
   async (req, res) => {
+    //console.log(req.file);
+
     try {
       //console.log(req.file);
       let desiredUser = await User.findById(req.user.id);
@@ -102,12 +109,31 @@ router.post("/images", auth, upload.single('image'),
         desiredUser.userImage = req.file.path
         await desiredUser.save();
         return res.json(desiredUser);
+      } else {
+        return res.status(400).json({ errors: [{ msg: 'Please add photo' }] });
       }
     } catch (err) {
       console.error(err.message);
       res.status(500).send('Server error');
     }
   });
+
+/*
+//@route  POST api/users/images
+//@desc   Store user images
+//@access Private
+router.post("/images", auth, upload.array('uploadedFiles', 5),
+  async (req, res) => {
+    const files = req.files;
+
+    if (!files) {
+      return res.status(400).json({ errors: [{ msg: 'Please add 5 photos' }] });
+    }
+
+    res.send(files);
+  }
+);
+*/
 
 // @route Post api/users/bio
 // @desc  Adds bio, grade, and gender
