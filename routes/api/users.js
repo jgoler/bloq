@@ -95,18 +95,29 @@ router.post('/', [
 //@route  POST api/users/images
 //@desc   Store user images
 //@access Private
-router.post("/images", auth, upload.single('userImage'),
+router.post("/images", auth, upload.array('userImages', 5),
   async (req, res) => {
-    //console.log(req.file);
+    //console.log(req.files);
+    const files = req.files;
+    //console.log(files);
+    if (!files) {
+      return res.status(400).json({ errors: [{ msg: 'Please add photos' }] });
+    }
 
+    console.log("here");
     try {
-      //console.log(req.file);
+      console.log("files: " + files);
       let desiredUser = await User.findById(req.user.id);
 
 
       if (desiredUser) {
         //desiredUser.bio = bio;
-        desiredUser.userImage = req.file.path
+        for (let i = 0; i < 5; i++) {
+          console.log("files[i]: " + files[i])
+          //console.log(files[i].filename.toString());
+          desiredUser.userImages.push(files[i].filename.toString());
+        }
+        //desiredUser.userImage = files
         await desiredUser.save();
         return res.json(desiredUser);
       } else {
@@ -114,7 +125,7 @@ router.post("/images", auth, upload.single('userImage'),
       }
     } catch (err) {
       console.error(err.message);
-      res.status(500).send('Server error');
+      return res.status(500).send('Server error');
     }
   });
 

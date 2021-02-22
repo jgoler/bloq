@@ -44,29 +44,13 @@ const UserSchema = new mongoose.Schema({
       }
     }
   ],
+  userImages: [{
+
+  }]
   /*
-  userImage: [
-    {
-      firstImage: {
-        type: String
-      },
-      secondImage: {
-        type: String
-      },
-      thirdImage: {
-        type: String
-      },
-      fourthImage: {
-        type: String
-      },
-      fifthImage: {
-        type: String
-      }
-    }
-  ]
-  */
   userImage: {
     type: String
   }
+  */
 });
 module.exports = User = mongoose.model('user', UserSchema);
